@@ -33,6 +33,10 @@
         <servlet-name>ContactDetailServlet</servlet-name>
         <servlet-class>servlet.ContactDetailServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>RegisterUserServlet</servlet-name>
+        <servlet-class>servlet.RegisterUserServlet</servlet-class>
+    </servlet>
 
     <!-- 增加联系人 -->
     <servlet-mapping>
@@ -58,5 +62,9 @@
     <servlet-mapping>
         <servlet-name>ContactDetailServlet</servlet-name>
         <url-pattern>/detail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RegisterUserServlet</servlet-name>
+        <url-pattern>/register</url-pattern>
     </servlet-mapping>
 </web-app>

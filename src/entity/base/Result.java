@@ -38,6 +38,13 @@ public class Result extends Base {
         this.msg = msg;
     }
 
+    public void addMsg(String appendMsg) {
+        if (this.msg != null) {
+            this.msg = this.msg + "，";
+        }
+        this.msg = this.msg + appendMsg;
+    }
+
     public void setContent(IContent content) {
         this.content = content;
     }

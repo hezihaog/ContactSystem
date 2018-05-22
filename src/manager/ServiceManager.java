@@ -1,7 +1,9 @@
 package manager;
 
 import service.ContactService;
+import service.UserService;
 import service.iml.ContactServiceImpl;
+import service.iml.UserServiceImpl;
 
 /**
  * Package: manager
@@ -26,9 +28,16 @@ public class ServiceManager {
     }
 
     /**
-     * 获取联系人业务层服务
+     * 获取联系人业务层服务对象
      */
     public ContactService getContactService() {
         return new ContactServiceImpl();
+    }
+
+    /**
+     * 获取用户业务层服务对象
+     */
+    public UserService getUserService() {
+        return new UserServiceImpl();
     }
 }

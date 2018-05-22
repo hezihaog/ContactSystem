@@ -3,7 +3,7 @@ package servlet;
 import constant.ContactSystemConstant;
 import entity.Contact;
 import entity.base.Result;
-import exception.ContactIsExistException;
+import exception.ContactExistException;
 import service.ContactService;
 import service.iml.ContactServiceImpl;
 import util.ResponseUtil;
@@ -92,7 +92,7 @@ public class AddContactServlet extends HttpServlet {
         try {
             service.addContact(contact);
             result.setSuccess();
-        } catch (ContactIsExistException e) {
+        } catch (ContactExistException e) {
             e.printStackTrace();
             //联系人已经存在
             result.setError();

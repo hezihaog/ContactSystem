@@ -1,7 +1,7 @@
 package service;
 
 import entity.Contact;
-import exception.ContactIsExistException;
+import exception.ContactExistException;
 import service.base.IService;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public interface ContactService extends IService {
      *
      * @param contact 联系人信息实体
      */
-    boolean addContact(Contact contact) throws ContactIsExistException;
+    boolean addContact(Contact contact) throws ContactExistException;
 
     /**
      * 更新联系人

@@ -92,6 +92,6 @@ public class ResponseUtil {
         }
         String msg = buffer.toString();
         msg = msg.substring(0, msg.length() - 1);
-        result.setMsg(msg);
+        result.addMsg(msg);
     }
 }
