@@ -44,4 +44,11 @@ public interface ContactDao {
      * 查找所有联系人
      */
     ArrayList<Contact> findAllContact();
+
+    /**
+     * 检查联系人是否存在
+     *
+     * @param contact 需要检查的联系人实体
+     */
+    boolean checkContactIsExist(Contact contact);
 }

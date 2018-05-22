@@ -3,6 +3,7 @@ package service.iml;
 import dao.ContactDao;
 import dao.iml.ContactDaoByMySQLImpl;
 import entity.Contact;
+import exception.ContactIsExistException;
 import service.ContactService;
 
 import java.util.ArrayList;
@@ -22,8 +23,16 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public boolean addContact(Contact contact) {
-        return mDao.addContact(contact);
+    public boolean addContact(Contact contact) throws ContactIsExistException {
+        //先检查是否已经有存在同名的联系人
+        boolean isExist = mDao.checkContactIsExist(contact);
+        if (isExist) {
+            //已经存在，抛出异常，通知调用方
+            throw new ContactIsExistException();
+        } else {
+            //第一次添加，进行添加
+            return mDao.addContact(contact);
+        }
     }
 
     @Override

@@ -143,4 +143,27 @@ public class ContactDaoByMySQLImpl implements ContactDao {
             JdbcUtil.close(connection, statement, resultSet);
         }
     }
+
+    @Override
+    public boolean checkContactIsExist(Contact contact) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            connection = JdbcUtil.getConnection();
+            statement = connection.prepareStatement("SELECT * FROM contact WHERE name = ?");
+            statement.setString(1, contact.getName());
+            resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            JdbcUtil.close(connection, statement, resultSet);
+        }
+        return false;
+    }
 }
