@@ -1,6 +1,7 @@
 package dao;
 
 import entity.Contact;
+import exception.ContactNoExistException;
 
 import java.util.ArrayList;
 
@@ -34,11 +35,18 @@ public interface ContactDao {
     boolean deleteContact(String id);
 
     /**
-     * 查找联系人
+     * 根据id查找联系人
      *
      * @return 要查找的联系人的id
      */
-    Contact findContactById(String id);
+    Contact findContactById(String id) throws ContactNoExistException;
+
+    /**
+     * 根据联系人姓名查找联系人
+     *
+     * @param contactName 联系人姓名
+     */
+    Contact findContactByName(String contactName) throws ContactNoExistException;
 
     /**
      * 查找所有联系人

@@ -3,6 +3,7 @@ package servlet;
 import constant.ContactSystemConstant;
 import entity.Contact;
 import entity.base.Result;
+import exception.ContactNoExistException;
 import service.ContactService;
 import service.iml.ContactServiceImpl;
 import util.ResponseUtil;
@@ -38,9 +39,18 @@ public class ContactDetailServlet extends HttpServlet {
             response.getWriter().write(ResponseUtil.convertResultToJson(result));
         } else {
             ContactService service = new ContactServiceImpl();
-            Contact contact = service.findContactById(contactId);
-            Result content = ResponseUtil.createResultWithContent(contact);
-            response.getWriter().write(ResponseUtil.convertResultToJson(content));
+            Contact contact;
+            try {
+                contact = service.findContactById(contactId);
+            } catch (ContactNoExistException e) {
+                e.printStackTrace();
+                Result result = ResponseUtil.createNoContentResult(false);
+                result.setMsg("要查看的联系人的contactId不存在！");
+                response.getWriter().write(ResponseUtil.convertResultToJson(result));
+                return;
+            }
+            Result result = ResponseUtil.createResultWithContent(contact);
+            response.getWriter().write(ResponseUtil.convertResultToJson(result));
         }
     }
 }

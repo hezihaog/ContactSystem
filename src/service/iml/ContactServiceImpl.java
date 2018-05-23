@@ -4,6 +4,8 @@ import dao.ContactDao;
 import dao.iml.ContactDaoByMySQLImpl;
 import entity.Contact;
 import exception.ContactExistException;
+import exception.ContactNoExistException;
+import exception.ContactUpdateNameExistException;
 import service.ContactService;
 
 import java.util.ArrayList;
@@ -36,18 +38,39 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public boolean updateContact(Contact contact) {
-        return mDao.updateContact(contact);
+    public boolean updateContact(Contact contact) throws ContactUpdateNameExistException {
+        Contact contactByName;
+        try {
+            contactByName = findContactByName(contact.getName());
+        } catch (ContactNoExistException e) {
+            //要更新的名字不存在表明是正常的，可以执行更新
+            return mDao.updateContact(contact);
+        }
+        if (contactByName != null) {
+            //要更新的名字存在，抛出异常
+            throw new ContactUpdateNameExistException();
+        } else {
+            return mDao.updateContact(contact);
+        }
     }
 
     @Override
-    public boolean deleteContact(String contactId) {
+    public boolean deleteContact(String contactId) throws ContactNoExistException {
+        Contact contact = mDao.findContactById(contactId);
+        if (contact == null) {
+            throw new ContactNoExistException();
+        }
         return mDao.deleteContact(contactId);
     }
 
     @Override
-    public Contact findContactById(String contactId) {
+    public Contact findContactById(String contactId) throws ContactNoExistException {
         return mDao.findContactById(contactId);
+    }
+
+    @Override
+    public Contact findContactByName(String contactName) throws ContactNoExistException {
+        return mDao.findContactByName(contactName);
     }
 
     @Override

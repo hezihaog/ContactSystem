@@ -2,6 +2,8 @@ package service;
 
 import entity.Contact;
 import exception.ContactExistException;
+import exception.ContactNoExistException;
+import exception.ContactUpdateNameExistException;
 import service.base.IService;
 
 import java.util.ArrayList;
@@ -26,21 +28,28 @@ public interface ContactService extends IService {
      *
      * @param contact 联系人信息实体
      */
-    boolean updateContact(Contact contact);
+    boolean updateContact(Contact contact) throws ContactUpdateNameExistException;
 
     /**
      * 删除联系人
      *
      * @param contactId 要删除的联系人的id
      */
-    boolean deleteContact(String contactId);
+    boolean deleteContact(String contactId) throws ContactNoExistException;
 
     /**
-     * 查找联系人
+     * 根据Id查找联系人
      *
      * @return 要查找的联系人的id
      */
-    Contact findContactById(String contactId);
+    Contact findContactById(String contactId) throws ContactNoExistException;
+
+    /**
+     * 根据联系人姓名查找联系人
+     *
+     * @param contactName 联系人姓名
+     */
+    Contact findContactByName(String contactName) throws ContactNoExistException;
 
     /**
      * 查找所有联系人

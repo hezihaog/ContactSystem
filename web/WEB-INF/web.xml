@@ -63,6 +63,7 @@
         <servlet-name>ContactDetailServlet</servlet-name>
         <url-pattern>/detail</url-pattern>
     </servlet-mapping>
+    <!-- 注册 -->
     <servlet-mapping>
         <servlet-name>RegisterUserServlet</servlet-name>
         <url-pattern>/register</url-pattern>

@@ -2,6 +2,7 @@ package servlet;
 
 import constant.ContactSystemConstant;
 import entity.base.Result;
+import exception.ContactNoExistException;
 import manager.ServiceManager;
 import service.ContactService;
 import util.ResponseUtil;
@@ -36,8 +37,18 @@ public class DeleteContactServlet extends HttpServlet {
             response.getWriter().write(ResponseUtil.convertResultToJson(result));
         } else {
             ContactService service = ServiceManager.getInstance().getContactService();
-            boolean isSuccess = service.deleteContact(contactId);
-            Result result = ResponseUtil.createNoContentResult(isSuccess);
+            Result result;
+            boolean isSuccess = false;
+            try {
+                isSuccess = service.deleteContact(contactId);
+                result = ResponseUtil.createNoContentResult(isSuccess);
+            } catch (ContactNoExistException contactNoExistException) {
+                contactNoExistException.printStackTrace();
+                result = ResponseUtil.createNoContentResult(false);
+                result.setMsg("删除失败，contactId不存在");
+                response.getWriter().write(ResponseUtil.convertResultToJson(result));
+                return;
+            }
             response.getWriter().write(ResponseUtil.convertResultToJson(result));
         }
     }

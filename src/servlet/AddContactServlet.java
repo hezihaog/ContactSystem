@@ -6,6 +6,7 @@ import entity.base.Result;
 import exception.ContactExistException;
 import service.ContactService;
 import service.iml.ContactServiceImpl;
+import util.ParamsUtil;
 import util.ResponseUtil;
 import util.TextUtil;
 
@@ -30,62 +31,49 @@ public class AddContactServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        //获取请求过来的参数
-        String name = request.getParameter(ContactSystemConstant.ParamsKey.name);
-        String gender = request.getParameter(ContactSystemConstant.ParamsKey.gender);
-        String age = request.getParameter(ContactSystemConstant.ParamsKey.age);
-        String phone = request.getParameter(ContactSystemConstant.ParamsKey.phone);
-        String email = request.getParameter(ContactSystemConstant.ParamsKey.email);
-        String qq = request.getParameter(ContactSystemConstant.ParamsKey.qq);
+        Contact contact = new Contact();
+        try {
+            contact = ParamsUtil.copyToBean(request, contact);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         //每个参数都是必传
-        if (TextUtil.isEmpty(name)) {
+        if (TextUtil.isEmpty(contact.getName())) {
             Result result = ResponseUtil.createNoContentResult(false);
             ResponseUtil.addLackParamsErrorMsg(result, ContactSystemConstant.ParamsKey.name);
             response.getWriter().write(ResponseUtil.convertResultToJson(result));
             return;
         }
-        if (TextUtil.isEmpty(gender)) {
+        if (TextUtil.isEmpty(contact.getGender())) {
             Result result = ResponseUtil.createNoContentResult(false);
             ResponseUtil.addLackParamsErrorMsg(result, ContactSystemConstant.ParamsKey.gender);
             response.getWriter().write(ResponseUtil.convertResultToJson(result));
             return;
         }
-        if (TextUtil.isEmpty(age)) {
+        if (TextUtil.isEmpty(String.valueOf(contact.getAge()))) {
             Result result = ResponseUtil.createNoContentResult(false);
             ResponseUtil.addLackParamsErrorMsg(result, ContactSystemConstant.ParamsKey.age);
             response.getWriter().write(ResponseUtil.convertResultToJson(result));
             return;
         }
-        if (TextUtil.isEmpty(phone)) {
+        if (TextUtil.isEmpty(contact.getPhone())) {
             Result result = ResponseUtil.createNoContentResult(false);
             ResponseUtil.addLackParamsErrorMsg(result, ContactSystemConstant.ParamsKey.phone);
             response.getWriter().write(ResponseUtil.convertResultToJson(result));
             return;
         }
-        if (TextUtil.isEmpty(email)) {
+        if (TextUtil.isEmpty(contact.getEmail())) {
             Result result = ResponseUtil.createNoContentResult(false);
             ResponseUtil.addLackParamsErrorMsg(result, ContactSystemConstant.ParamsKey.email);
             response.getWriter().write(ResponseUtil.convertResultToJson(result));
             return;
         }
-        if (TextUtil.isEmpty(qq)) {
+        if (TextUtil.isEmpty(contact.getQq())) {
             Result result = ResponseUtil.createNoContentResult(false);
             ResponseUtil.addLackParamsErrorMsg(result, ContactSystemConstant.ParamsKey.qq);
             response.getWriter().write(ResponseUtil.convertResultToJson(result));
             return;
         }
-        //将数据封装到entity
-        Contact contact = new Contact();
-        contact.setName(name);
-        contact.setGender(gender);
-        try {
-            contact.setAge(Integer.valueOf(age));
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-        }
-        contact.setPhone(phone);
-        contact.setEmail(email);
-        contact.setQq(qq);
         //调用业务层进行添加联系人
         ContactService service = new ContactServiceImpl();
         Result result = ResponseUtil.createNoContentResult();

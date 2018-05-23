@@ -7,6 +7,7 @@ import exception.UserExistException;
 import manager.ServiceManager;
 import service.UserService;
 import util.MD5Util;
+import util.ParamsUtil;
 import util.ResponseUtil;
 import util.TextUtil;
 
@@ -27,14 +28,20 @@ public class RegisterUserServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String userName = req.getParameter(UserConstant.ParamsKey.userName);
-        String pwd = req.getParameter(UserConstant.ParamsKey.pwd);
+        User user = new User();
+        try {
+            user = ParamsUtil.copyToBean(req, user);
+            //密码需要md5加密后存入数据库
+            user.setPwd(MD5Util.MD5(user.getPwd()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Result result = null;
-        if (TextUtil.isEmpty(userName)) {
+        if (TextUtil.isEmpty(user.getUserName())) {
             result = ResponseUtil.createNoContentResult(false);
             ResponseUtil.addLackParamsErrorMsg(result, UserConstant.ParamsKey.userName);
         }
-        if (TextUtil.isEmpty(pwd)) {
+        if (TextUtil.isEmpty(user.getPwd())) {
             result = ResponseUtil.createNoContentResult(false);
             ResponseUtil.addLackParamsErrorMsg(result, UserConstant.ParamsKey.pwd);
         }
@@ -43,10 +50,6 @@ public class RegisterUserServlet extends HttpServlet {
             resp.getWriter().write(ResponseUtil.convertResultToJson(result));
             return;
         }
-        User user = new User();
-        user.setUserName(userName);
-        //密码需要md5加密后存入数据库
-        user.setPwd(MD5Util.MD5(pwd));
         UserService userService = ServiceManager.getInstance().getUserService();
         try {
             userService.register(user);
