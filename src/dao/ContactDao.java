@@ -3,7 +3,7 @@ package dao;
 import entity.Contact;
 import exception.ContactNoExistException;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Package: dao
@@ -51,7 +51,7 @@ public interface ContactDao {
     /**
      * 查找所有联系人
      */
-    ArrayList<Contact> findAllContact();
+    List<Contact> findAllContact();
 
     /**
      * 检查联系人是否存在

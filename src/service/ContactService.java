@@ -6,7 +6,7 @@ import exception.ContactNoExistException;
 import exception.ContactUpdateNameExistException;
 import service.base.IService;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Package: service
@@ -54,5 +54,5 @@ public interface ContactService extends IService {
     /**
      * 查找所有联系人
      */
-    ArrayList<Contact> findAllContact();
+    List<Contact> findAllContact();
 }

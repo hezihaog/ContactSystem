@@ -52,7 +52,12 @@ public class RegisterUserServlet extends HttpServlet {
         }
         UserService userService = ServiceManager.getInstance().getUserService();
         try {
-            userService.register(user);
+            boolean isRegisterSuccess = userService.register(user);
+            if (!isRegisterSuccess) {
+                result = ResponseUtil.createNoContentResult(false);
+                result.setMsg("注册失败！");
+                resp.getWriter().write(ResponseUtil.convertResultToJson(result));
+            }
         } catch (UserExistException e) {
             e.printStackTrace();
             result = ResponseUtil.createNoContentResult(false);

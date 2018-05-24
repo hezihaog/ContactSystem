@@ -8,7 +8,7 @@ import exception.ContactNoExistException;
 import exception.ContactUpdateNameExistException;
 import service.ContactService;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Package: service.iml
@@ -74,7 +74,7 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public ArrayList<Contact> findAllContact() {
+    public List<Contact> findAllContact() {
         return mDao.findAllContact();
     }
 }

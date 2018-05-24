@@ -1,11 +1,7 @@
 package util;
 
 import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Properties;
 
 /**
@@ -27,7 +23,7 @@ public class JdbcUtil {
     /**
      * 静态代码块中（只加载一次）
      */
-    static{
+    static {
         try {
             //读取db.properties文件
             Properties props = new Properties();
@@ -67,7 +63,7 @@ public class JdbcUtil {
     /**
      * 抽取获取连接对象的方法
      */
-    public static Connection getConnection(){
+    public static Connection getConnection() {
         try {
             Connection conn = DriverManager.getConnection(url, user, password);
             return conn;
@@ -77,20 +73,11 @@ public class JdbcUtil {
         }
     }
 
-
     /**
-     * 释放资源的方法
+     * 释放链接
      */
-    public static void close(Connection conn,Statement stmt){
-        if(stmt!=null){
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
-            }
-        }
-        if(conn!=null){
+    public static void close(Connection conn) {
+        if (conn != null) {
             try {
                 conn.close();
             } catch (SQLException e) {
@@ -100,15 +87,11 @@ public class JdbcUtil {
         }
     }
 
-    public static void close(Connection conn,Statement stmt,ResultSet rs){
-        if(rs!=null)
-            try {
-                rs.close();
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-                throw new RuntimeException(e1);
-            }
-        if(stmt!=null){
+    /**
+     * 释放资源的方法
+     */
+    public static void close(Connection conn, Statement stmt) {
+        if (stmt != null) {
             try {
                 stmt.close();
             } catch (SQLException e) {
@@ -116,13 +99,25 @@ public class JdbcUtil {
                 throw new RuntimeException(e);
             }
         }
-        if(conn!=null){
+        close(conn);
+    }
+
+    public static void close(Connection conn, Statement stmt, ResultSet rs) {
+        if (rs != null)
             try {
-                conn.close();
+                rs.close();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+                throw new RuntimeException(e1);
+            }
+        if (stmt != null) {
+            try {
+                stmt.close();
             } catch (SQLException e) {
                 e.printStackTrace();
                 throw new RuntimeException(e);
             }
         }
+        close(conn);
     }
 }

@@ -15,10 +15,10 @@ public interface UserService extends IService {
     /**
      * 注册一个用户
      */
-    void register(User user) throws UserExistException;
+    boolean register(User user) throws UserExistException;
 
     /**
      * 保存一个用户信息
      */
-    void saveUser(User user);
+    boolean saveUser(User user);
 }
