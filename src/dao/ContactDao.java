@@ -1,9 +1,8 @@
 package dao;
 
+import dao.base.IDao;
 import entity.Contact;
 import exception.ContactNoExistException;
-
-import java.util.List;
 
 /**
  * Package: dao
@@ -12,7 +11,7 @@ import java.util.List;
  * Auther: Wally
  * Descirbe:联系人Dao层基础接口
  */
-public interface ContactDao {
+public interface ContactDao extends IDao<Contact> {
     /**
      * 添加联系人
      *
@@ -47,11 +46,6 @@ public interface ContactDao {
      * @param contactName 联系人姓名
      */
     Contact findContactByName(String contactName) throws ContactNoExistException;
-
-    /**
-     * 查找所有联系人
-     */
-    List<Contact> findAllContact();
 
     /**
      * 检查联系人是否存在

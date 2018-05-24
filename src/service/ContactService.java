@@ -1,6 +1,7 @@
 package service;
 
 import entity.Contact;
+import entity.IPageRequestParams;
 import exception.ContactExistException;
 import exception.ContactNoExistException;
 import exception.ContactUpdateNameExistException;
@@ -55,4 +56,11 @@ public interface ContactService extends IService {
      * 查找所有联系人
      */
     List<Contact> findAllContact();
+
+    /**
+     * 查询所有联系人并带分页
+     *
+     * @param pageParams 分页的请求参数
+     */
+    List<Contact> findAllContactWithPage(IPageRequestParams pageParams);
 }

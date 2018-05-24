@@ -3,6 +3,7 @@ package service.iml;
 import dao.ContactDao;
 import dao.iml.ContactDaoByMySQLImpl;
 import entity.Contact;
+import entity.IPageRequestParams;
 import exception.ContactExistException;
 import exception.ContactNoExistException;
 import exception.ContactUpdateNameExistException;
@@ -75,6 +76,11 @@ public class ContactServiceImpl implements ContactService {
 
     @Override
     public List<Contact> findAllContact() {
-        return mDao.findAllContact();
+        return mDao.findAll();
+    }
+
+    @Override
+    public List<Contact> findAllContactWithPage(IPageRequestParams pageParams) {
+        return mDao.findAllWithPage(pageParams);
     }
 }

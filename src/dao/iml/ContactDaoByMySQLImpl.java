@@ -2,6 +2,7 @@ package dao.iml;
 
 import dao.ContactDao;
 import dao.base.BaseDao;
+import dao.base.PageMsg;
 import entity.Contact;
 import exception.ContactNoExistException;
 import org.apache.commons.dbutils.QueryRunner;
@@ -21,7 +22,7 @@ import java.util.List;
  * Auther: Wally
  * Descirbe:联系人Dao层MySql实现类
  */
-public class ContactDaoByMySQLImpl extends BaseDao implements ContactDao {
+public class ContactDaoByMySQLImpl extends BaseDao<Contact> implements ContactDao {
     @Override
     public boolean addContact(Contact contact) {
         Connection connection = JdbcUtil.getConnection();
@@ -111,23 +112,6 @@ public class ContactDaoByMySQLImpl extends BaseDao implements ContactDao {
     }
 
     @Override
-    public List<Contact> findAllContact() {
-        String sql = "SELECT * FROM contact";
-        Connection connection = JdbcUtil.getConnection();
-        QueryRunner runner = new QueryRunner();
-        List<Contact> allContactList;
-        try {
-            allContactList = runner.query(connection, sql, new BeanListHandler<Contact>(Contact.class));
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        } finally {
-            JdbcUtil.close(connection);
-        }
-        return allContactList;
-    }
-
-    @Override
     public boolean checkContactIsExist(Contact contact) {
         Connection connection = JdbcUtil.getConnection();
         String sql = "SELECT id FROM contact WHERE name = ?";
@@ -142,5 +126,37 @@ public class ContactDaoByMySQLImpl extends BaseDao implements ContactDao {
             JdbcUtil.close(connection);
         }
         return id != null;
+    }
+
+    @Override
+    protected List<Contact> onFindAllWithPage(PageMsg pageMsg) {
+        String sql = "SELECT * FROM contact LIMIT ?, ?";
+        Connection connection = JdbcUtil.getConnection();
+        QueryRunner runner = new QueryRunner();
+        try {
+            return runner.query(connection, sql, new BeanListHandler<Contact>(Contact.class), pageMsg.getStartIndex(), pageMsg.getCount());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            JdbcUtil.close(connection);
+        }
+    }
+
+    @Override
+    public List<Contact> findAll() {
+        String sql = "SELECT * FROM contact";
+        Connection connection = JdbcUtil.getConnection();
+        QueryRunner runner = new QueryRunner();
+        List<Contact> allContactList;
+        try {
+            allContactList = runner.query(connection, sql, new BeanListHandler<Contact>(Contact.class));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            JdbcUtil.close(connection);
+        }
+        return allContactList;
     }
 }

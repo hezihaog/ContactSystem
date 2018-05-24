@@ -2,10 +2,12 @@ package servlet;
 
 import entity.Contact;
 import entity.ContactList;
+import entity.IPageRequestParams;
 import entity.base.ArrayContent;
 import entity.base.Result;
 import service.ContactService;
 import service.iml.ContactServiceImpl;
+import util.PageUtil;
 import util.ResponseUtil;
 
 import javax.servlet.ServletException;
@@ -30,9 +32,10 @@ public class AllContactServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        IPageRequestParams pageRequestParams = PageUtil.parsePageRequestParams(request);
         //调用业务层的Service进行获取所有联系人
         ContactService service = new ContactServiceImpl();
-        List<Contact> allContact = service.findAllContact();
+        List<Contact> allContact = service.findAllContactWithPage(pageRequestParams);
         ContactList contactList = new ContactList(new ArrayContent<Contact>(allContact));
         Result result = ResponseUtil.createResultWithContent(contactList);
         response.getWriter().write(ResponseUtil.convertResultToJson(result));

@@ -1,11 +1,13 @@
 package util;
 
-import org.apache.commons.dbcp.BasicDataSourceFactory;
+import org.apache.commons.dbutils.QueryRunner;
+import pool.C3p0Pool;
+import pool.IPool;
 
-import javax.sql.DataSource;
-import java.io.InputStream;
-import java.sql.*;
-import java.util.Properties;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * Package: util
@@ -15,8 +17,7 @@ import java.util.Properties;
  * Descirbe:Jdbc工具类
  */
 public class JdbcUtil {
-
-    private static DataSource sDataSource;
+    private static IPool sPool;
 
     private JdbcUtil() {
     }
@@ -26,27 +27,9 @@ public class JdbcUtil {
      */
     static {
         try {
-            //读取db.properties文件
-            Properties props = new Properties();
-            /**
-             *  . 代表java命令运行的目录
-             *  在java项目下，. java命令的运行目录从项目的根目录开始
-             *  在web项目下，  . java命令的而运行目录从tomcat/bin目录开始
-             *  所以不能使用点.
-             */
-            //FileInputStream in = new FileInputStream("./src/db.properties");
-
-            /**
-             * 使用类路径的读取方式
-             *  / : 斜杠表示classpath的根目录
-             *     在java项目下，classpath的根目录从bin目录开始
-             *     在web项目下，classpath的根目录从WEB-INF/classes目录开始
-             */
-            InputStream in = JdbcUtil.class.getResourceAsStream("/db.properties");
-            //加载配置文件
-            props.load(in);
-            //连接池配置文件
-            sDataSource = BasicDataSourceFactory.createDataSource(props);
+            //配置连接池实现类
+            sPool = new C3p0Pool();
+            sPool.init();
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("驱程程序注册出错");
@@ -58,11 +41,18 @@ public class JdbcUtil {
      */
     public static Connection getConnection() {
         try {
-            return sDataSource.getConnection();
+            return sPool.getConnection();
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * 获取查找对象，直接设置DataSource资源
+     */
+    public static QueryRunner getQueryRunner() {
+        return new QueryRunner(sPool.getDataSource());
     }
 
     /**
