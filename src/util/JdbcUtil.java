@@ -84,7 +84,7 @@ public class JdbcUtil {
         close(conn);
     }
 
-    public static void close(Connection conn, Statement stmt, ResultSet rs) {
+    public static void close(Statement stmt, ResultSet rs) {
         if (rs != null)
             try {
                 rs.close();
@@ -100,6 +100,10 @@ public class JdbcUtil {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    public static void close(Connection conn, Statement stmt, ResultSet rs) {
+        close(stmt, rs);
         close(conn);
     }
 }

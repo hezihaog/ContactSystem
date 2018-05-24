@@ -11,7 +11,6 @@ import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
 import util.JdbcUtil;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -25,65 +24,53 @@ import java.util.List;
 public class ContactDaoByMySQLImpl extends BaseDao<Contact> implements ContactDao {
     @Override
     public boolean addContact(Contact contact) {
-        Connection connection = JdbcUtil.getConnection();
         String sql = "INSERT INTO contact(NAME,gender,age,phone,email,qq) VALUES( ?, ?, ?, ?, ?, ?)";
         QueryRunner runner = new QueryRunner();
         try {
-            int num = runner.update(connection, sql, contact.getName(), contact.getGender(), contact.getAge(), contact.getPhone(), contact.getEmail(), contact.getQq());
+            int num = runner.update(JdbcUtil.getConnection(), sql, contact.getName(), contact.getGender(), contact.getAge(), contact.getPhone(), contact.getEmail(), contact.getQq());
             return num > 0;
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            JdbcUtil.close(connection);
         }
         return false;
     }
 
     @Override
     public boolean updateContact(Contact contact) {
-        Connection connection = JdbcUtil.getConnection();
         String sql = "UPDATE contact SET NAME= ? ,gender= ?,age= ?,phone= ?,email= ?,qq= ? WHERE id= ?";
         QueryRunner runner = new QueryRunner();
         try {
-            int num = runner.update(connection, sql, contact.getName(), contact.getGender(), contact.getAge(), contact.getPhone(), contact.getEmail(), contact.getQq(), contact.getId());
+            int num = runner.update(JdbcUtil.getConnection(), sql, contact.getName(), contact.getGender(), contact.getAge(), contact.getPhone(), contact.getEmail(), contact.getQq(), contact.getId());
             return num > 0;
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            JdbcUtil.close(connection);
         }
         return false;
     }
 
     @Override
     public boolean deleteContact(String id) {
-        Connection connection = JdbcUtil.getConnection();
         String sql = "DELETE FROM contact WHERE id=?";
         QueryRunner runner = new QueryRunner();
         try {
-            int num = runner.update(connection, sql, id);
+            int num = runner.update(JdbcUtil.getConnection(), sql, id);
             return num > 0;
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            JdbcUtil.close(connection);
         }
         return false;
     }
 
     @Override
     public Contact findContactById(String id) throws ContactNoExistException {
-        Connection connection = JdbcUtil.getConnection();
         String sql = "SELECT * FROM contact WHERE id = ?";
         QueryRunner runner = new QueryRunner();
-        Contact contact = null;
+        Contact contact;
         try {
-            contact = runner.query(connection, sql, new BeanHandler<Contact>(Contact.class), id);
+            contact = runner.query(JdbcUtil.getConnection(), sql, new BeanHandler<Contact>(Contact.class), id);
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
-        } finally {
-            JdbcUtil.close(connection);
         }
         if (contact == null) {
             throw new ContactNoExistException();
@@ -93,17 +80,14 @@ public class ContactDaoByMySQLImpl extends BaseDao<Contact> implements ContactDa
 
     @Override
     public Contact findContactByName(String contactName) throws ContactNoExistException {
-        Connection connection = JdbcUtil.getConnection();
         String sql = "select * from contact where name = ?";
         QueryRunner runner = new QueryRunner();
         Contact contact;
         try {
-            contact = runner.query(connection, sql, new BeanHandler<Contact>(Contact.class), contactName);
+            contact = runner.query(JdbcUtil.getConnection(), sql, new BeanHandler<Contact>(Contact.class), contactName);
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
-        } finally {
-            JdbcUtil.close(connection);
         }
         if (contact == null) {
             throw new ContactNoExistException();
@@ -113,17 +97,14 @@ public class ContactDaoByMySQLImpl extends BaseDao<Contact> implements ContactDa
 
     @Override
     public boolean checkContactIsExist(Contact contact) {
-        Connection connection = JdbcUtil.getConnection();
         String sql = "SELECT id FROM contact WHERE name = ?";
         QueryRunner runner = new QueryRunner();
         Integer id;
         try {
-            id = runner.query(connection, sql, new ScalarHandler<Integer>(), contact.getName());
+            id = runner.query(JdbcUtil.getConnection(), sql, new ScalarHandler<Integer>(), contact.getName());
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
-        } finally {
-            JdbcUtil.close(connection);
         }
         return id != null;
     }
@@ -131,31 +112,25 @@ public class ContactDaoByMySQLImpl extends BaseDao<Contact> implements ContactDa
     @Override
     protected List<Contact> onFindAllWithPage(PageMsg pageMsg) {
         String sql = "SELECT * FROM contact LIMIT ?, ?";
-        Connection connection = JdbcUtil.getConnection();
         QueryRunner runner = new QueryRunner();
         try {
-            return runner.query(connection, sql, new BeanListHandler<Contact>(Contact.class), pageMsg.getStartIndex(), pageMsg.getCount());
+            return runner.query(JdbcUtil.getConnection(), sql, new BeanListHandler<Contact>(Contact.class), pageMsg.getStartIndex(), pageMsg.getCount());
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
-        } finally {
-            JdbcUtil.close(connection);
         }
     }
 
     @Override
     public List<Contact> findAll() {
         String sql = "SELECT * FROM contact";
-        Connection connection = JdbcUtil.getConnection();
         QueryRunner runner = new QueryRunner();
         List<Contact> allContactList;
         try {
-            allContactList = runner.query(connection, sql, new BeanListHandler<Contact>(Contact.class));
+            allContactList = runner.query(JdbcUtil.getConnection(), sql, new BeanListHandler<Contact>(Contact.class));
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
-        } finally {
-            JdbcUtil.close(connection);
         }
         return allContactList;
     }
