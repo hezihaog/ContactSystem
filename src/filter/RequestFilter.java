@@ -10,12 +10,12 @@ import java.io.IOException;
 
 /**
  * Package: filter
- * FileName: RequestFile
+ * FileName: RequestFilter
  * Date: on 2018/5/21  下午3:08
  * Auther: Wally
  * Descirbe:请求过滤器，给请求参数进行一些处理
  */
-public class RequestFile implements Filter {
+public class RequestFilter implements Filter {
     /**
      * 过滤器初始化配置
      */
@@ -40,7 +40,7 @@ public class RequestFile implements Filter {
         request = ParamsUtil.configCharset(request, response, mEncodingCharset);
         //打印日志
         System.out.println("当前访问的项目为：" + context.getContextPath());
-        System.out.println(RequestFile.class.getSimpleName() + "拦截到用户请求的地址：" + request.getServletPath());
+        System.out.println(RequestFilter.class.getSimpleName() + "拦截到用户请求的地址：" + request.getServletPath());
         //将请求和响应继续下去
         filterChain.doFilter(request, servletResponse);
     }

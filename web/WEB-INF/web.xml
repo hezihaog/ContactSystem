@@ -6,7 +6,7 @@
     <!-- 请求过滤器，将一些请求进行编码等处理 -->
     <filter>
         <filter-name>requestHandler</filter-name>
-        <filter-class>filter.RequestFile</filter-class>
+        <filter-class>filter.RequestFilter</filter-class>
         <init-param>
             <param-name>encoding</param-name>
             <param-value>UTF-8</param-value>
