@@ -34,16 +34,15 @@ public class RequestFile implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         ServletContext context = this.filterConfig.getServletContext();
-        //初始化参数的字符集
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
-        //配置设置的字符集
-        ParamsUtil.configCharset(request, response, mEncodingCharset);
+        //配置设置的字符集（get请求的处理已在Tomcat的server.xml中配置字符集为UTF-8，在这里不需要处理了，只处理post请求）
+        request = ParamsUtil.configCharset(request, response, mEncodingCharset);
         //打印日志
         System.out.println("当前访问的项目为：" + context.getContextPath());
         System.out.println(RequestFile.class.getSimpleName() + "拦截到用户请求的地址：" + request.getServletPath());
         //将请求和响应继续下去
-        filterChain.doFilter(servletRequest, servletResponse);
+        filterChain.doFilter(request, servletResponse);
     }
 
     @Override

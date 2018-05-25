@@ -17,12 +17,14 @@ public class ParamsUtil {
     /**
      * 配置字符集
      */
-    public static void configCharset(HttpServletRequest request, HttpServletResponse response, String charset) throws UnsupportedEncodingException {
+    public static HttpServletRequest configCharset(HttpServletRequest request, HttpServletResponse response, String charset) throws UnsupportedEncodingException {
         //解决post请求过来时的编码问题
         request.setCharacterEncoding(charset);
         //解决响应到浏览器的编码问题
         response.setCharacterEncoding(charset);
         response.setHeader("content-type", "text/html;charset=" + charset);
+        //get请求已在Tomcat容器配置
+        return request;
     }
 
     /**
