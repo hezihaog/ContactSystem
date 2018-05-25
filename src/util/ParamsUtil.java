@@ -3,6 +3,7 @@ package util;
 import org.apache.commons.beanutils.BeanUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URLDecoder;
@@ -13,6 +14,17 @@ import java.util.Map;
  * 请求参数工具类
  */
 public class ParamsUtil {
+    /**
+     * 配置字符集
+     */
+    public static void configCharset(HttpServletRequest request, HttpServletResponse response, String charset) throws UnsupportedEncodingException {
+        //解决post请求过来时的编码问题
+        request.setCharacterEncoding(charset);
+        //解决响应到浏览器的编码问题
+        response.setCharacterEncoding(charset);
+        response.setHeader("content-type", "text/html;charset=" + charset);
+    }
+
     /**
      * 解决get请求过来时的编码问题
      *

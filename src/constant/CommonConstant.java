@@ -8,6 +8,13 @@ package constant;
  * Descirbe:常用常量
  */
 public class CommonConstant {
+    /**
+     * 组件的一些初始化参数
+     */
+    public static class Config {
+        public static final String encoding = "encoding";
+    }
+
     public static class Key {
         //页码
         public static final String page = "page";
