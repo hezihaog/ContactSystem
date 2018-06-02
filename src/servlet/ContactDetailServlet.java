@@ -41,7 +41,7 @@ public class ContactDetailServlet extends HttpServlet {
             ContactService service = new ContactServiceImpl();
             Contact contact;
             try {
-                contact = service.findContactById(contactId);
+                contact = service.findById(contactId);
             } catch (ContactNoExistException e) {
                 e.printStackTrace();
                 Result result = ResponseUtil.createNoContentResult(false);

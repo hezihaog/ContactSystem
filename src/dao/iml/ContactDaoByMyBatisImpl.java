@@ -106,6 +106,30 @@ public class ContactDaoByMyBatisImpl extends BaseDao<Contact> implements Contact
     }
 
     @Override
+    public boolean deleteList(String[] ids) {
+        SqlSession sqlSession = null;
+        try {
+            sqlSession = MybatisHelper.getInstance().getSqlSession();
+            int row = sqlSession.delete(getMyBatisNameSpace("deleteList"), ids);
+            //批量删除，如果传入不存在的id，则不会删除到，直接无视了
+            if (row > 0) {
+                sqlSession.commit();
+                return true;
+            } else {
+                sqlSession.rollback();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (sqlSession != null) {
+                sqlSession.rollback();
+            }
+        } finally {
+            MybatisHelper.getInstance().closeSqlSession();
+        }
+        return false;
+    }
+
+    @Override
     public Contact findById(String id) throws ContactNoExistException {
         SqlSession sqlSession = null;
         Contact contact = null;

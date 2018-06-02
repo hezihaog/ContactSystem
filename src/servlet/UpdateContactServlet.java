@@ -43,7 +43,7 @@ public class UpdateContactServlet extends HttpServlet {
         ContactService service = ServiceManager.getInstance().getContactService();
         Contact contactByService = null;
         try {
-            contactByService = service.findContactById(contactId);
+            contactByService = service.findById(contactId);
         } catch (ContactNoExistException e) {
             e.printStackTrace();
             //要更新的联系人不存在
@@ -61,7 +61,7 @@ public class UpdateContactServlet extends HttpServlet {
             //更新数据
             boolean isSuccess;
             try {
-                isSuccess = service.updateContact(contactByService);
+                isSuccess = service.update(contactByService);
             } catch (ContactUpdateNameExistException e) {
                 e.printStackTrace();
                 //要更新的联系人姓名已经存在了

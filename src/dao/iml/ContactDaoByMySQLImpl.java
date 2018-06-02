@@ -62,6 +62,14 @@ public class ContactDaoByMySQLImpl extends BaseDao<Contact> implements ContactDa
     }
 
     @Override
+    public boolean deleteList(String[] ids) {
+        for (String id : ids) {
+            delete(id);
+        }
+        return true;
+    }
+
+    @Override
     public Contact findById(String id) throws ContactNoExistException {
         String sql = "SELECT * FROM contact WHERE id = ?";
         QueryRunner runner = new QueryRunner();

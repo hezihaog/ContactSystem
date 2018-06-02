@@ -36,20 +36,34 @@ public class DeleteContactServlet extends HttpServlet {
             ResponseUtil.addLackParamsErrorMsg(result, ContactSystemConstant.ParamsKey.contactId);
             response.getWriter().write(ResponseUtil.convertResultToJson(result));
         } else {
-            ContactService service = ServiceManager.getInstance().getContactService();
+            //多个id拼接删除
+            String[] ids = contactId.split(",");
             Result result;
-            boolean isSuccess = false;
-            try {
-                isSuccess = service.deleteContact(contactId);
-                result = ResponseUtil.createNoContentResult(isSuccess);
-            } catch (ContactNoExistException contactNoExistException) {
-                contactNoExistException.printStackTrace();
-                result = ResponseUtil.createNoContentResult(false);
-                result.setMsg("删除失败，contactId不存在");
-                response.getWriter().write(ResponseUtil.convertResultToJson(result));
-                return;
+            if (ids.length >= 2) {
+                ContactService service = ServiceManager.getInstance().getContactService();
+                boolean isSuccess = service.deleteList(ids);
+                if (isSuccess) {
+                    response.getWriter().write(ResponseUtil.convertResultToJson(ResponseUtil.createNoContentResult(true)));
+                } else {
+                    response.getWriter().write(ResponseUtil.convertResultToJson(ResponseUtil.createNoContentResult(false)));
+                }
+            } else if (ids.length == 1) {
+                //删除单个联系人
+                ContactService service = ServiceManager.getInstance().getContactService();
+                try {
+                    boolean isSuccess = service.delete(contactId);
+                    result = ResponseUtil.createNoContentResult(isSuccess);
+                    response.getWriter().write(ResponseUtil.convertResultToJson(result));
+                } catch (ContactNoExistException contactNoExistException) {
+                    contactNoExistException.printStackTrace();
+                    result = ResponseUtil.createNoContentResult(false);
+                    result.setMsg("删除失败，contactId不存在");
+                    response.getWriter().write(ResponseUtil.convertResultToJson(result));
+                }
+            } else {
+                //异常情况，传了非法字符
+                response.getWriter().write(ResponseUtil.convertResultToJson(ResponseUtil.createNoContentResult(false)));
             }
-            response.getWriter().write(ResponseUtil.convertResultToJson(result));
         }
     }
 }

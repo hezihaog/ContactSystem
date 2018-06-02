@@ -29,11 +29,11 @@
         id属性：为insert这么一个sql语句取一个任意唯一的名字
         parameterType:要执行的dao中的方法的参数，如果是类的话，必须使用全路径类
     -->
-    <insert id="addContact" parameterType="entity.Contact">
+    <insert id="add" parameterType="entity.Contact">
 		INSERT INTO contact(NAME,gender,age,phone,email,qq) VALUES(#{name}, #{gender}, #{age}, #{phone}, #{email}, #{qq})
 	</insert>
 
-    <update id="updateContact" parameterType="map">
+    <update id="update" parameterType="map">
         UPDATE contact
         <set>
             <if test="name != null">
@@ -58,15 +58,24 @@
         where id = #{id}
     </update>
 
-    <delete id="deleteContact" parameterType="string">
+    <!-- 删除单个id -->
+    <delete id="delete" parameterType="string">
 		DELETE FROM contact where id = #{id}
 	</delete>
 
-    <select id="findContactById" parameterType="string" resultType="entity.Contact">
+    <!-- 删除多个联系人 -->
+    <delete id="deleteList">
+        delete from contact where id in
+        <foreach collection="array" open="(" close=")" separator="," item="ids">
+            #{ids}
+        </foreach>
+    </delete>
+
+    <select id="findById" parameterType="string" resultType="entity.Contact">
         SELECT * FROM contact c WHERE c.id = #{id}
     </select>
 
-    <select id="findContactByName" parameterType="map" resultType="entity.Contact">
+    <select id="findByName" parameterType="map" resultType="entity.Contact">
         SELECT * FROM contact c
         <where>
             <if test="contactName != null">
@@ -75,7 +84,7 @@
         </where>
     </select>
 
-    <select id="checkContactIsExist" parameterType="entity.Contact" resultType="int">
+    <select id="checkIsExist" parameterType="entity.Contact" resultType="int">
         SELECT id FROM contact c WHERE c.name = #{name}
     </select>
 

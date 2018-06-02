@@ -35,7 +35,7 @@ public class AllContactServlet extends HttpServlet {
         IPageRequestParams pageRequestParams = PageUtil.parsePageRequestParams(request);
         //调用业务层的Service进行获取所有联系人
         ContactService service = new ContactServiceImpl();
-        List<Contact> allContact = service.findAllContactWithPage(pageRequestParams);
+        List<Contact> allContact = service.findAllWithPage(pageRequestParams);
         ContactList contactList = new ContactList(new ArrayContent<Contact>(allContact));
         Result result = ResponseUtil.createResultWithContent(contactList);
         response.getWriter().write(ResponseUtil.convertResultToJson(result));

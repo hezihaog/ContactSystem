@@ -26,7 +26,7 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public boolean addContact(Contact contact) throws ContactExistException {
+    public boolean add(Contact contact) throws ContactExistException {
         //先检查是否已经有存在同名的联系人
         boolean isExist = mDao.checkIsExist(contact);
         if (isExist) {
@@ -39,10 +39,10 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public boolean updateContact(Contact contact) throws ContactUpdateNameExistException {
+    public boolean update(Contact contact) throws ContactUpdateNameExistException {
         Contact contactByName;
         try {
-            contactByName = findContactByName(contact.getName());
+            contactByName = findByName(contact.getName());
         } catch (ContactNoExistException e) {
             //要更新的名字不存在表明是正常的，可以执行更新
             return mDao.update(contact);
@@ -56,7 +56,7 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public boolean deleteContact(String contactId) throws ContactNoExistException {
+    public boolean delete(String contactId) throws ContactNoExistException {
         Contact contact = mDao.findById(contactId);
         if (contact == null) {
             throw new ContactNoExistException();
@@ -65,22 +65,27 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public Contact findContactById(String contactId) throws ContactNoExistException {
+    public boolean deleteList(String[] ids) {
+        return mDao.deleteList(ids);
+    }
+
+    @Override
+    public Contact findById(String contactId) throws ContactNoExistException {
         return mDao.findById(contactId);
     }
 
     @Override
-    public Contact findContactByName(String contactName) throws ContactNoExistException {
+    public Contact findByName(String contactName) throws ContactNoExistException {
         return mDao.findByName(contactName);
     }
 
     @Override
-    public List<Contact> findAllContact() {
+    public List<Contact> findAll() {
         return mDao.findAll();
     }
 
     @Override
-    public List<Contact> findAllContactWithPage(IPageRequestParams pageParams) {
+    public List<Contact> findAllWithPage(IPageRequestParams pageParams) {
         return mDao.findAllWithPage(pageParams);
     }
 }

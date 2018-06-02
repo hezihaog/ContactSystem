@@ -78,7 +78,7 @@ public class AddContactServlet extends HttpServlet {
         ContactService service = new ContactServiceImpl();
         Result result = ResponseUtil.createNoContentResult();
         try {
-            service.addContact(contact);
+            service.add(contact);
             result.setSuccess();
         } catch (ContactExistException e) {
             e.printStackTrace();

@@ -34,6 +34,13 @@ public interface ContactDao extends IDao<Contact> {
     boolean delete(String id);
 
     /**
+     * 删除多个id的联系人
+     *
+     * @param ids 联系人id数组
+     */
+    boolean deleteList(String[] ids);
+
+    /**
      * 根据id查找联系人
      *
      * @return 要查找的联系人的id
