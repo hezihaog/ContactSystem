@@ -13,7 +13,7 @@ public class Contact extends ObjectContent {
     private String id;
     private String name;
     private String gender;
-    private int age;
+    private int age = -1;
     private String phone;
     private String email;
     private String qq;

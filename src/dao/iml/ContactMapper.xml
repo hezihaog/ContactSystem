@@ -24,14 +24,64 @@
         <result property="qq" column="qq" jdbcType="VARCHAR"/>
     </resultMap>
 
+    <!-- 添加时动态的插入参数 -->
+    <sql id="addParams">
+        <!-- 去掉最后的逗号 -->
+        <trim suffixOverrides=",">
+            <if test="name != null">
+                name,
+            </if>
+            <if test="gender != null">
+                gender,
+            </if>
+            <if test="age != null">
+                age,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="qq != null">
+                qq,
+            </if>
+        </trim>
+    </sql>
+
+    <!-- 添加时动态的插入值 -->
+    <sql id="addValues">
+        <!-- 去掉最后的逗号 -->
+        <trim suffixOverrides=",">
+            <if test="name != null">
+                #{name},
+            </if>
+            <if test="gender != null">
+                #{gender},
+            </if>
+            <if test="age != null">
+                #{age},
+            </if>
+            <if test="phone != null">
+                #{phone},
+            </if>
+            <if test="email != null">
+                #{email},
+            </if>
+            <if test="qq != null">
+                #{qq},
+            </if>
+        </trim>
+    </sql>
+
     <!--
         insert标签：要书写insert这么一个sql语句
         id属性：为insert这么一个sql语句取一个任意唯一的名字
         parameterType:要执行的dao中的方法的参数，如果是类的话，必须使用全路径类
     -->
     <insert id="add" parameterType="entity.Contact">
-		INSERT INTO contact(NAME,gender,age,phone,email,qq) VALUES(#{name}, #{gender}, #{age}, #{phone}, #{email}, #{qq})
-	</insert>
+        INSERT INTO contact (<include refid="addParams"/>) VALUES(<include refid="addValues"/>)
+    </insert>
 
     <update id="update" parameterType="map">
         UPDATE contact

@@ -32,7 +32,7 @@ public class ContactDaoByMyBatisImpl extends BaseDao<Contact> implements Contact
         SqlSession sqlSession = null;
         try {
             sqlSession = MybatisHelper.getInstance().getSqlSession();
-            int row = sqlSession.insert(getMyBatisNameSpace("add"));
+            int row = sqlSession.insert(getMyBatisNameSpace("add"), contact);
             if (row > 0) {
                 sqlSession.commit();
                 return true;
@@ -173,7 +173,8 @@ public class ContactDaoByMyBatisImpl extends BaseDao<Contact> implements Contact
         SqlSession sqlSession = null;
         try {
             sqlSession = MybatisHelper.getInstance().getSqlSession();
-            sqlSession.selectOne(getMyBatisNameSpace("checkIsExist"), contact);
+            int id = sqlSession.selectOne(getMyBatisNameSpace("checkIsExist"), contact);
+            return id > 0;
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

@@ -37,40 +37,10 @@ public class AddContactServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //每个参数都是必传
+        //姓名必传
         if (TextUtil.isEmpty(contact.getName())) {
             Result result = ResponseUtil.createNoContentResult(false);
             ResponseUtil.addLackParamsErrorMsg(result, ContactSystemConstant.ParamsKey.name);
-            response.getWriter().write(ResponseUtil.convertResultToJson(result));
-            return;
-        }
-        if (TextUtil.isEmpty(contact.getGender())) {
-            Result result = ResponseUtil.createNoContentResult(false);
-            ResponseUtil.addLackParamsErrorMsg(result, ContactSystemConstant.ParamsKey.gender);
-            response.getWriter().write(ResponseUtil.convertResultToJson(result));
-            return;
-        }
-        if (TextUtil.isEmpty(String.valueOf(contact.getAge()))) {
-            Result result = ResponseUtil.createNoContentResult(false);
-            ResponseUtil.addLackParamsErrorMsg(result, ContactSystemConstant.ParamsKey.age);
-            response.getWriter().write(ResponseUtil.convertResultToJson(result));
-            return;
-        }
-        if (TextUtil.isEmpty(contact.getPhone())) {
-            Result result = ResponseUtil.createNoContentResult(false);
-            ResponseUtil.addLackParamsErrorMsg(result, ContactSystemConstant.ParamsKey.phone);
-            response.getWriter().write(ResponseUtil.convertResultToJson(result));
-            return;
-        }
-        if (TextUtil.isEmpty(contact.getEmail())) {
-            Result result = ResponseUtil.createNoContentResult(false);
-            ResponseUtil.addLackParamsErrorMsg(result, ContactSystemConstant.ParamsKey.email);
-            response.getWriter().write(ResponseUtil.convertResultToJson(result));
-            return;
-        }
-        if (TextUtil.isEmpty(contact.getQq())) {
-            Result result = ResponseUtil.createNoContentResult(false);
-            ResponseUtil.addLackParamsErrorMsg(result, ContactSystemConstant.ParamsKey.qq);
             response.getWriter().write(ResponseUtil.convertResultToJson(result));
             return;
         }
