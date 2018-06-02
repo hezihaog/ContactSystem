@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace属性是名称空间，必须唯一 -->
+<mapper namespace="entity.Contact">
+    <!-- resultMap标签:映射实体与表
+         type属性：表示实体全路径名
+         id属性：为实体与表的映射取一个任意的唯一的名字
+    -->
+    <resultMap id="contactResultMap" type="contact">
+        <!-- id标签:映射主键属性
+             result标签：映射非主键属性
+             property属性:实体的属性名
+             column属性：表的字段名
+        -->
+        <id property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="gender" column="gender" jdbcType="VARCHAR"/>
+        <result property="age" column="age" jdbcType="INTEGER"/>
+        <result property="gender" column="gender" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="qq" column="qq" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--
+        insert标签：要书写insert这么一个sql语句
+        id属性：为insert这么一个sql语句取一个任意唯一的名字
+        parameterType:要执行的dao中的方法的参数，如果是类的话，必须使用全路径类
+    -->
+    <insert id="addContact" parameterType="entity.Contact">
+		INSERT INTO contact(NAME,gender,age,phone,email,qq) VALUES(#{name}, #{gender}, #{age}, #{phone}, #{email}, #{qq})
+	</insert>
+
+    <update id="updateContact" parameterType="map">
+        UPDATE contact
+        <set>
+            <if test="name != null">
+                NAME = #{name},
+            </if>
+            <if test="name != null">
+                gender = #{gender},
+            </if>
+            <if test="name != null">
+                age = #{age},
+            </if>
+            <if test="name != null">
+                phone = #{phone},
+            </if>
+            <if test="name != null">
+                email = #{email},
+            </if>
+            <if test="name != null">
+                qq = #{qq},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteContact" parameterType="string">
+		DELETE FROM contact where id = #{id}
+	</delete>
+
+    <select id="findContactById" parameterType="string" resultType="entity.Contact">
+        SELECT * FROM contact c WHERE c.id = #{id}
+    </select>
+
+    <select id="findContactByName" parameterType="map" resultType="entity.Contact">
+        SELECT * FROM contact c
+        <where>
+            <if test="contactName != null">
+                and c.name = #{contactName}
+            </if>
+        </where>
+    </select>
+
+    <select id="checkContactIsExist" parameterType="entity.Contact" resultType="int">
+        SELECT id FROM contact c WHERE c.name = #{name}
+    </select>
+
+    <select id="onFindAllWithPage" parameterType="map" resultType="entity.Contact">
+        SELECT * FROM contact limit #{startIndex}, #{count};
+    </select>
+
+    <select id="findAll" resultType="entity.Contact">
+        SELECT * FROM contact;
+    </select>
+</mapper>

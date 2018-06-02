@@ -22,7 +22,7 @@ public class ParamsUtil {
         request.setCharacterEncoding(charset);
         //解决响应到浏览器的编码问题
         response.setCharacterEncoding(charset);
-        response.setHeader("content-type", "text/html;charset=" + charset);
+        response.setHeader("content-type", "text/json;charset=" + charset);
         //get请求已在Tomcat容器配置
         return request;
     }

@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class UserDaoByMySQLImpl extends BaseDao<User> implements UserDao {
     @Override
-    public boolean addUser(User user) {
+    public boolean add(User user) {
         String sql = "INSERT INTO user(userName, pwd) VALUES(?, ?)";
         QueryRunner runner = new QueryRunner();
         try {
@@ -35,7 +35,7 @@ public class UserDaoByMySQLImpl extends BaseDao<User> implements UserDao {
     }
 
     @Override
-    public boolean deleteUser(String userId) {
+    public boolean delete(String userId) {
         String sql = "DELETE FROM user WHERE id = ?";
         QueryRunner runner = new QueryRunner();
         try {
@@ -61,7 +61,7 @@ public class UserDaoByMySQLImpl extends BaseDao<User> implements UserDao {
     }
 
     @Override
-    public boolean updateUser(User user) {
+    public boolean update(User user) {
         String sql = "UPDATE USER SET userName = ?, pwd = ? WHERE id = ?";
         QueryRunner runner = new QueryRunner();
         try {
@@ -74,7 +74,7 @@ public class UserDaoByMySQLImpl extends BaseDao<User> implements UserDao {
     }
 
     @Override
-    public boolean checkUserIsExist(User user) {
+    public boolean checkIsExist(User user) {
         String sql = "SELECT id FROM USER WHERE userName = ?";
         QueryRunner runner = new QueryRunner();
         try {

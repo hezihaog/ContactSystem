@@ -1,7 +1,7 @@
 package service.iml;
 
 import dao.ContactDao;
-import dao.iml.ContactDaoByMySQLImpl;
+import dao.iml.ContactDaoByMyBatisImpl;
 import entity.Contact;
 import entity.IPageRequestParams;
 import exception.ContactExistException;
@@ -22,19 +22,19 @@ public class ContactServiceImpl implements ContactService {
     private final ContactDao mDao;
 
     public ContactServiceImpl() {
-        mDao = new ContactDaoByMySQLImpl();
+        mDao = new ContactDaoByMyBatisImpl();
     }
 
     @Override
     public boolean addContact(Contact contact) throws ContactExistException {
         //先检查是否已经有存在同名的联系人
-        boolean isExist = mDao.checkContactIsExist(contact);
+        boolean isExist = mDao.checkIsExist(contact);
         if (isExist) {
             //已经存在，抛出异常，通知调用方
             throw new ContactExistException();
         } else {
             //第一次添加，进行添加
-            return mDao.addContact(contact);
+            return mDao.add(contact);
         }
     }
 
@@ -45,33 +45,33 @@ public class ContactServiceImpl implements ContactService {
             contactByName = findContactByName(contact.getName());
         } catch (ContactNoExistException e) {
             //要更新的名字不存在表明是正常的，可以执行更新
-            return mDao.updateContact(contact);
+            return mDao.update(contact);
         }
         if (contactByName != null) {
             //要更新的名字存在，抛出异常
             throw new ContactUpdateNameExistException();
         } else {
-            return mDao.updateContact(contact);
+            return mDao.update(contact);
         }
     }
 
     @Override
     public boolean deleteContact(String contactId) throws ContactNoExistException {
-        Contact contact = mDao.findContactById(contactId);
+        Contact contact = mDao.findById(contactId);
         if (contact == null) {
             throw new ContactNoExistException();
         }
-        return mDao.deleteContact(contactId);
+        return mDao.delete(contactId);
     }
 
     @Override
     public Contact findContactById(String contactId) throws ContactNoExistException {
-        return mDao.findContactById(contactId);
+        return mDao.findById(contactId);
     }
 
     @Override
     public Contact findContactByName(String contactName) throws ContactNoExistException {
-        return mDao.findContactByName(contactName);
+        return mDao.findByName(contactName);
     }
 
     @Override

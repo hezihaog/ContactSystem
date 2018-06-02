@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean register(User user) throws UserExistException {
-        boolean isExist = mDao.checkUserIsExist(user);
+        boolean isExist = mDao.checkIsExist(user);
         if (isExist) {
             throw new UserExistException();
         } else {
@@ -33,6 +33,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean saveUser(User user) {
-        return mDao.addUser(user);
+        return mDao.add(user);
     }
 }

@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class ContactDaoByMySQLImpl extends BaseDao<Contact> implements ContactDao {
     @Override
-    public boolean addContact(Contact contact) {
+    public boolean add(Contact contact) {
         String sql = "INSERT INTO contact(NAME,gender,age,phone,email,qq) VALUES( ?, ?, ?, ?, ?, ?)";
         QueryRunner runner = new QueryRunner();
         try {
@@ -36,7 +36,7 @@ public class ContactDaoByMySQLImpl extends BaseDao<Contact> implements ContactDa
     }
 
     @Override
-    public boolean updateContact(Contact contact) {
+    public boolean update(Contact contact) {
         String sql = "UPDATE contact SET NAME= ? ,gender= ?,age= ?,phone= ?,email= ?,qq= ? WHERE id= ?";
         QueryRunner runner = new QueryRunner();
         try {
@@ -49,7 +49,7 @@ public class ContactDaoByMySQLImpl extends BaseDao<Contact> implements ContactDa
     }
 
     @Override
-    public boolean deleteContact(String id) {
+    public boolean delete(String id) {
         String sql = "DELETE FROM contact WHERE id=?";
         QueryRunner runner = new QueryRunner();
         try {
@@ -62,7 +62,7 @@ public class ContactDaoByMySQLImpl extends BaseDao<Contact> implements ContactDa
     }
 
     @Override
-    public Contact findContactById(String id) throws ContactNoExistException {
+    public Contact findById(String id) throws ContactNoExistException {
         String sql = "SELECT * FROM contact WHERE id = ?";
         QueryRunner runner = new QueryRunner();
         Contact contact;
@@ -79,8 +79,8 @@ public class ContactDaoByMySQLImpl extends BaseDao<Contact> implements ContactDa
     }
 
     @Override
-    public Contact findContactByName(String contactName) throws ContactNoExistException {
-        String sql = "select * from contact where name = ?";
+    public Contact findByName(String contactName) throws ContactNoExistException {
+        String sql = "SELECT * FROM contact WHERE name = ?";
         QueryRunner runner = new QueryRunner();
         Contact contact;
         try {
@@ -96,7 +96,7 @@ public class ContactDaoByMySQLImpl extends BaseDao<Contact> implements ContactDa
     }
 
     @Override
-    public boolean checkContactIsExist(Contact contact) {
+    public boolean checkIsExist(Contact contact) {
         String sql = "SELECT id FROM contact WHERE name = ?";
         QueryRunner runner = new QueryRunner();
         Integer id;

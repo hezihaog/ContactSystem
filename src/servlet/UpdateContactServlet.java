@@ -52,7 +52,7 @@ public class UpdateContactServlet extends HttpServlet {
             response.getWriter().write(ResponseUtil.convertResultToJson(result));
         }
         if (contactByService != null) {
-            //获取请求过来的参数
+            //将请求传递过来的要求的信息覆盖掉表中现有的字段数据
             try {
                 ParamsUtil.copyToBean(request, contactByService);
             } catch (Exception e) {
