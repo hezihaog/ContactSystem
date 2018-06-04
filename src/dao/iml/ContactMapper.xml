@@ -18,11 +18,14 @@
         <result property="name" column="name" jdbcType="VARCHAR"/>
         <result property="gender" column="gender" jdbcType="VARCHAR"/>
         <result property="age" column="age" jdbcType="INTEGER"/>
-        <result property="gender" column="gender" jdbcType="VARCHAR"/>
         <result property="phone" column="phone" jdbcType="VARCHAR"/>
         <result property="email" column="email" jdbcType="VARCHAR"/>
         <result property="qq" column="qq" jdbcType="VARCHAR"/>
     </resultMap>
+
+    <sql id="contactMainColumn">
+        name, gender, age, phone, email, qq
+    </sql>
 
     <!-- 添加时动态的插入参数 -->
     <sql id="addParams">
@@ -122,11 +125,11 @@
     </delete>
 
     <select id="findById" parameterType="string" resultType="entity.Contact">
-        SELECT * FROM contact c WHERE c.id = #{id}
+        SELECT <include refid="contactMainColumn"/> FROM contact c WHERE c.id = #{id}
     </select>
 
     <select id="findByName" parameterType="map" resultType="entity.Contact">
-        SELECT * FROM contact c
+        SELECT <include refid="contactMainColumn"/> FROM contact c
         <where>
             <if test="contactName != null">
                 and c.name = #{contactName}
@@ -139,10 +142,10 @@
     </select>
 
     <select id="onFindAllWithPage" parameterType="map" resultType="entity.Contact">
-        SELECT * FROM contact limit #{startIndex}, #{count};
+        SELECT <include refid="contactMainColumn"/> FROM contact limit #{startIndex}, #{count};
     </select>
 
     <select id="findAll" resultType="entity.Contact">
-        SELECT * FROM contact;
+        SELECT <include refid="contactMainColumn"/> FROM contact;
     </select>
 </mapper>
