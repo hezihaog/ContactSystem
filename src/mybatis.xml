@@ -30,6 +30,6 @@
 
 	<!-- 加载映射文件-->
 	<mappers>
-		<mapper resource="dao/iml/ContactMapper.xml"/>
+		<mapper resource="dao/mapper/ContactMapper.xml"/>
 	</mappers>
 </configuration>
