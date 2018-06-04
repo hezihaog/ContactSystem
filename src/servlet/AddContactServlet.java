@@ -37,19 +37,27 @@ public class AddContactServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        //UserId必传
+        if (TextUtil.isEmpty(contact.getUserId())) {
+            ResponseUtil.writeLackParamsErrorMsg(response, ContactSystemConstant.ParamsKey.userId);
+            return;
+        }
         //姓名必传
         if (TextUtil.isEmpty(contact.getName())) {
-            Result result = ResponseUtil.createNoContentResult(false);
-            ResponseUtil.addLackParamsErrorMsg(result, ContactSystemConstant.ParamsKey.name);
-            response.getWriter().write(ResponseUtil.convertResultToJson(result));
+            ResponseUtil.writeLackParamsErrorMsg(response, ContactSystemConstant.ParamsKey.name);
             return;
         }
         //调用业务层进行添加联系人
         ContactService service = new ContactServiceImpl();
         Result result = ResponseUtil.createNoContentResult();
         try {
-            service.add(contact);
-            result.setSuccess();
+            boolean isAddSuccess = service.add(contact);
+            if (isAddSuccess) {
+                result.setSuccess();
+            } else {
+                result.setError();
+                result.setMsg("添加失败");
+            }
         } catch (ContactExistException e) {
             e.printStackTrace();
             //联系人已经存在

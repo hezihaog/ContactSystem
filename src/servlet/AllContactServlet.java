@@ -1,5 +1,6 @@
 package servlet;
 
+import constant.ContactSystemConstant;
 import entity.Contact;
 import entity.ContactList;
 import entity.IPageRequestParams;
@@ -8,7 +9,9 @@ import entity.base.Result;
 import service.ContactService;
 import service.iml.ContactServiceImpl;
 import util.PageUtil;
+import util.ParamsUtil;
 import util.ResponseUtil;
+import util.TextUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -32,10 +35,18 @@ public class AllContactServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        //获取用户id
+        String userId = ParamsUtil.getParams(request, ContactSystemConstant.ParamsKey.userId);
+        if (TextUtil.isEmpty(userId)) {
+            Result result = ResponseUtil.createNoContentResult(false);
+            ResponseUtil.addLackParamsErrorMsg(result, ContactSystemConstant.ParamsKey.userId);
+            response.getWriter().write(ResponseUtil.convertResultToJson(result));
+            return;
+        }
         IPageRequestParams pageRequestParams = PageUtil.parsePageRequestParams(request);
         //调用业务层的Service进行获取所有联系人
         ContactService service = new ContactServiceImpl();
-        List<Contact> allContact = service.findAllWithPage(pageRequestParams);
+        List<Contact> allContact = service.findAllWithPage(userId, pageRequestParams);
         ContactList contactList = new ContactList(new ArrayContent<Contact>(allContact));
         Result result = ResponseUtil.createResultWithContent(contactList);
         response.getWriter().write(ResponseUtil.convertResultToJson(result));

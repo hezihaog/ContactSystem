@@ -12,6 +12,7 @@ import util.JdbcUtil;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Package: dao.iml
@@ -21,9 +22,15 @@ import java.util.List;
  * Descirbe:UserDao的MySql实现
  */
 public class UserDaoByMySQLImpl extends BaseDao<User> implements UserDao {
+
+    @Override
+    protected String initTabName() {
+        return "my_user";
+    }
+
     @Override
     public boolean add(User user) {
-        String sql = "INSERT INTO user(userName, pwd) VALUES(?, ?)";
+        String sql = "INSERT INTO " + getTabName() + "(userName, pwd) VALUES(?, ?)";
         QueryRunner runner = new QueryRunner();
         try {
             int num = runner.update(JdbcUtil.getConnection(), sql, user.getUserName(), user.getPwd());
@@ -36,7 +43,7 @@ public class UserDaoByMySQLImpl extends BaseDao<User> implements UserDao {
 
     @Override
     public boolean delete(String userId) {
-        String sql = "DELETE FROM user WHERE id = ?";
+        String sql = "DELETE FROM " + getTabName() + " WHERE id = ?";
         QueryRunner runner = new QueryRunner();
         try {
             int num = runner.update(JdbcUtil.getConnection(), sql, userId);
@@ -49,7 +56,7 @@ public class UserDaoByMySQLImpl extends BaseDao<User> implements UserDao {
 
     @Override
     public User findById(String userId) {
-        String sql = "SELECT * FROM USER WHERE id = ?";
+        String sql = "SELECT * FROM " + getTabName() + " WHERE id = ?";
         QueryRunner runner = new QueryRunner();
         User user = null;
         try {
@@ -62,7 +69,7 @@ public class UserDaoByMySQLImpl extends BaseDao<User> implements UserDao {
 
     @Override
     public boolean update(User user) {
-        String sql = "UPDATE USER SET userName = ?, pwd = ? WHERE id = ?";
+        String sql = "UPDATE " + getTabName() + " SET userName = ?, pwd = ? WHERE id = ?";
         QueryRunner runner = new QueryRunner();
         try {
             int num = runner.update(JdbcUtil.getConnection(), sql, user.getUserName(), user.getPwd(), user.getId());
@@ -75,7 +82,7 @@ public class UserDaoByMySQLImpl extends BaseDao<User> implements UserDao {
 
     @Override
     public boolean checkIsExist(User user) {
-        String sql = "SELECT id FROM USER WHERE userName = ?";
+        String sql = "SELECT id FROM " + getTabName() + " WHERE userName = ?";
         QueryRunner runner = new QueryRunner();
         try {
             Integer result = runner.query(JdbcUtil.getConnection(), sql, new ScalarHandler<Integer>(), user.getUserName());
@@ -88,8 +95,8 @@ public class UserDaoByMySQLImpl extends BaseDao<User> implements UserDao {
     }
 
     @Override
-    protected List<User> onFindAllWithPage(PageMsg pageMsg) {
-        String sql = "SELECT * FROM user LIMIT ?, ?";
+    protected List<User> onFindAllWithPage(Map<String, Object> args,PageMsg pageMsg) {
+        String sql = "SELECT * FROM " + getTabName() + " LIMIT ?, ?";
         QueryRunner runner = JdbcUtil.getQueryRunner();
         try {
             return runner.query(sql, new BeanListHandler<User>(User.class), pageMsg.getStartIndex(), pageMsg.getCount());
@@ -100,8 +107,8 @@ public class UserDaoByMySQLImpl extends BaseDao<User> implements UserDao {
     }
 
     @Override
-    public List<User> findAll() {
-        String sql = "SELECT * FROM user";
+    public List<User> findAll(Map<String, Object> args) {
+        String sql = "SELECT * FROM " + getTabName();
         QueryRunner runner = JdbcUtil.getQueryRunner();
         try {
             return runner.query(sql, new BeanListHandler<User>(User.class));

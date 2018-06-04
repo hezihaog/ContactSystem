@@ -7,15 +7,24 @@ import entity.base.ObjectContent;
  * FileName: Contact
  * Date: on 2018/5/21  下午2:44
  * Auther: Wally
- * Descirbe:
+ * Descirbe:联系人实体
  */
 public class Contact extends ObjectContent {
+    //联系人Id
     private String id;
+    //用户Id
+    private String userId;
+    //联系人姓名
     private String name;
+    //联系人性别
     private String gender;
+    //联系人年龄
     private int age = -1;
+    //联系人手机号
     private String phone;
+    //联系人电子邮箱
     private String email;
+    //联系人QQ
     private String qq;
 
     public String getId() {
@@ -24,6 +33,14 @@ public class Contact extends ObjectContent {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getName() {

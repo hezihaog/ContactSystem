@@ -8,13 +8,14 @@
          type属性：表示实体全路径名
          id属性：为实体与表的映射取一个任意的唯一的名字
     -->
-    <resultMap id="contactResultMap" type="contact">
+    <resultMap id="contactResultMap" type="entity.Contact">
         <!-- id标签:映射主键属性
              result标签：映射非主键属性
              property属性:实体的属性名
              column属性：表的字段名
         -->
         <id property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="userId" column="userId" jdbcType="INTEGER"/>
         <result property="name" column="name" jdbcType="VARCHAR"/>
         <result property="gender" column="gender" jdbcType="VARCHAR"/>
         <result property="age" column="age" jdbcType="INTEGER"/>
@@ -23,14 +24,22 @@
         <result property="qq" column="qq" jdbcType="VARCHAR"/>
     </resultMap>
 
+    <sql id="tableName">
+        contact
+    </sql>
+
+    <!-- 主要字段 -->
     <sql id="contactMainColumn">
-        name, gender, age, phone, email, qq
+        contact.userId as 'userId', contact.id, contact.name, contact.gender, contact.age, contact.phone, contact.email, contact.qq
     </sql>
 
     <!-- 添加时动态的插入参数 -->
     <sql id="addParams">
         <!-- 去掉最后的逗号 -->
         <trim suffixOverrides=",">
+            <if test="userId != null">
+                userId,
+            </if>
             <if test="name != null">
                 name,
             </if>
@@ -56,6 +65,9 @@
     <sql id="addValues">
         <!-- 去掉最后的逗号 -->
         <trim suffixOverrides=",">
+            <if test="userId != null">
+                #{userId},
+            </if>
             <if test="name != null">
                 #{name},
             </if>
@@ -83,11 +95,14 @@
         parameterType:要执行的dao中的方法的参数，如果是类的话，必须使用全路径类
     -->
     <insert id="add" parameterType="entity.Contact">
-        INSERT INTO contact (<include refid="addParams"/>) VALUES(<include refid="addValues"/>)
+        INSERT INTO
+        <include refid="tableName"/>
+        (<include refid="addParams"/>) VALUES(<include refid="addValues"/>)
     </insert>
 
     <update id="update" parameterType="map">
-        UPDATE contact
+        UPDATE
+        <include refid="tableName"/>
         <set>
             <if test="name != null">
                 NAME = #{name},
@@ -108,44 +123,67 @@
                 qq = #{qq},
             </if>
         </set>
-        where id = #{id}
+        where contact.userId = #{userId} and id = #{id}
     </update>
 
-    <!-- 删除单个id -->
-    <delete id="delete" parameterType="string">
-		DELETE FROM contact where id = #{id}
-	</delete>
-
-    <!-- 删除多个联系人 -->
-    <delete id="deleteList">
-        delete from contact where id in
-        <foreach collection="array" open="(" close=")" separator="," item="ids">
-            #{ids}
-        </foreach>
+    <!-- 删除指定联系人的单个联系人id -->
+    <delete id="delete" parameterType="map">
+        DELETE FROM
+        <include refid="tableName"/>
+        where contact.userId = #{userId} and contact.id = #{contactId}
     </delete>
 
-    <select id="findById" parameterType="string" resultType="entity.Contact">
-        SELECT <include refid="contactMainColumn"/> FROM contact c WHERE c.id = #{id}
+    <!-- 查找指定用户的指定联系人id的联系人 -->
+    <select id="findById" parameterType="map" resultType="entity.Contact">
+        SELECT
+        <include refid="contactMainColumn"/>
+        FROM
+        <include refid="tableName"/>
+        WHERE contact.userId = #{userId} and contact.id = #{contactId}
     </select>
 
+    <!-- 查找指定用户的指定联系人姓名的联系人 -->
     <select id="findByName" parameterType="map" resultType="entity.Contact">
-        SELECT <include refid="contactMainColumn"/> FROM contact c
+        SELECT
+        <include refid="contactMainColumn"/>
+        FROM
+        <include refid="tableName"/>
+        c
         <where>
+            <if test="userId != null">
+                my_user.id = #{userId}
+            </if>
             <if test="contactName != null">
                 and c.name = #{contactName}
             </if>
         </where>
     </select>
 
+    <!-- 指定一个用户名和指定的用户名，查询该用户下是否已经存在了 -->
     <select id="checkIsExist" parameterType="entity.Contact" resultType="int">
-        SELECT id FROM contact c WHERE c.name = #{name}
+        SELECT id FROM
+        <include refid="tableName"/>
+        c WHERE c.userId = #{userId} and c.name = #{name}
     </select>
 
+    <!-- 查询指定用户的联系人，带分页 -->
     <select id="onFindAllWithPage" parameterType="map" resultType="entity.Contact">
-        SELECT <include refid="contactMainColumn"/> FROM contact limit #{startIndex}, #{count};
+        SELECT
+        <include refid="contactMainColumn"/>
+        FROM
+        <include refid="tableName"/>
+        inner join my_user on contact.userId = my_user.id where contact.userId = #{userId} limit #{startIndex},
+        #{count};
     </select>
 
+    <!-- 查询指定用户的所有联系人，不分页 -->
     <select id="findAll" resultType="entity.Contact">
-        SELECT <include refid="contactMainColumn"/> FROM contact;
+        SELECT
+        <include refid="contactMainColumn"/>
+        FROM
+        <include refid="tableName"/>
+        inner join my_user
+        on contact.userId = my_user.id
+        where contact.userId = #{userId};
     </select>
 </mapper>

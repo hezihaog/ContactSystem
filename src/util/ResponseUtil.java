@@ -4,6 +4,9 @@ import com.alibaba.fastjson.JSON;
 import entity.base.IContent;
 import entity.base.Result;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 /**
  * Package: util
  * FileName: ResponseUtil
@@ -93,5 +96,17 @@ public class ResponseUtil {
         String msg = buffer.toString();
         msg = msg.substring(0, msg.length() - 1);
         result.addMsg(msg);
+    }
+
+    /**
+     * 输出缺少字段信息到结果
+     *
+     * @param response       响应对象
+     * @param lackParamsName 缺少的字段参数名
+     */
+    public static void writeLackParamsErrorMsg(HttpServletResponse response, String... lackParamsName) throws IOException {
+        Result result = ResponseUtil.createNoContentResult(false);
+        ResponseUtil.addLackParamsErrorMsg(result, lackParamsName);
+        response.getWriter().write(ResponseUtil.convertResultToJson(result));
     }
 }

@@ -32,18 +32,22 @@ public class UpdateContactServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String contactId = request.getParameter(ContactSystemConstant.ParamsKey.contactId);
-        //缺少字段
+        String contactId = ParamsUtil.getParams(request, ContactSystemConstant.ParamsKey.contactId);
+        String userId = ParamsUtil.getParams(request, ContactSystemConstant.ParamsKey.userId);
+        //缺少联系人id字段
         if (TextUtil.isEmpty(contactId)) {
-            Result result = ResponseUtil.createNoContentResult(false);
-            ResponseUtil.addLackParamsErrorMsg(result, ContactSystemConstant.ParamsKey.contactId);
-            response.getWriter().write(ResponseUtil.convertResultToJson(result));
+            ResponseUtil.writeLackParamsErrorMsg(response, ContactSystemConstant.ParamsKey.contactId);
+            return;
+        }
+        //缺少用户id
+        if (TextUtil.isEmpty(userId)) {
+            ResponseUtil.writeLackParamsErrorMsg(response, ContactSystemConstant.ParamsKey.userId);
             return;
         }
         ContactService service = ServiceManager.getInstance().getContactService();
         Contact contactByService = null;
         try {
-            contactByService = service.findById(contactId);
+            contactByService = service.findById(userId, contactId);
         } catch (ContactNoExistException e) {
             e.printStackTrace();
             //要更新的联系人不存在

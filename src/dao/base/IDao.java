@@ -4,6 +4,7 @@ import entity.IPageRequestParams;
 import entity.base.IContent;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Package: dao.base
@@ -24,9 +25,24 @@ public interface IDao<T extends IContent> {
     List<T> findAll();
 
     /**
+     * 查询所有，传递需要的参数
+     *
+     * @param args 装载参数的Map容器
+     */
+    List<T> findAll(Map<String, Object> args);
+
+    /**
      * 查询所有，并带分页
      *
      * @param pageParams 分页请求参数
      */
     List<T> findAllWithPage(IPageRequestParams pageParams);
+
+    /**
+     * 查询所有，并带分页
+     *
+     * @param args       args 装载参数的Map容器
+     * @param pageParams 分页请求参数
+     */
+    List<T> findAllWithPage(Map<String, Object> args, IPageRequestParams pageParams);
 }

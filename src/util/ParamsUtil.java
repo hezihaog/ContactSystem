@@ -35,10 +35,18 @@ public class ParamsUtil {
      * @return 正常使用utf-8解码的参数值
      */
     public static String getParams(HttpServletRequest request, String paramsKey) {
+        //如果没有设置Tomcat字符编码为UTF-8，则需要手动传入ISO-8859-1
+        return getParams(request, paramsKey, "UTF-8");
+    }
+
+    public static String getParams(HttpServletRequest request, String paramsKey, String charset) {
         String paramsValue;
         try {
             paramsValue = request.getParameter(paramsKey);
-            paramsValue = URLEncoder.encode(paramsValue, "ISO-8859-1");
+            if (paramsValue == null) {
+                return null;
+            }
+            paramsValue = URLEncoder.encode(paramsValue, charset);
             paramsValue = URLDecoder.decode(paramsValue, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

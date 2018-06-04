@@ -1,5 +1,6 @@
 package dao.iml;
 
+import constant.ContactSystemConstant;
 import dao.ContactDao;
 import dao.base.BaseDao;
 import dao.base.PageMsg;
@@ -18,6 +19,11 @@ import java.util.*;
  * Descirbe:联系人增删查改，MyBatis实现
  */
 public class ContactDaoByMyBatisImpl extends BaseDao<Contact> implements ContactDao {
+    @Override
+    protected String initTabName() {
+        return "contact";
+    }
+
     /**
      * 获取方法对应的MyBatis命名空间
      *
@@ -56,6 +62,7 @@ public class ContactDaoByMyBatisImpl extends BaseDao<Contact> implements Contact
         try {
             sqlSession = MybatisHelper.getInstance().getSqlSession();
             LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+            map.put("userId", contact.getUserId());
             map.put("id", contact.getId());
             map.put("name", contact.getName());
             map.put("gender", contact.getGender());
@@ -83,11 +90,14 @@ public class ContactDaoByMyBatisImpl extends BaseDao<Contact> implements Contact
     }
 
     @Override
-    public boolean delete(String id) {
+    public boolean delete(String userId, String contactId) {
         SqlSession sqlSession = null;
         try {
             sqlSession = MybatisHelper.getInstance().getSqlSession();
-            int row = sqlSession.delete(getMyBatisNameSpace("delete"), id);
+            HashMap<String, Object> map = new HashMap<String, Object>();
+            map.put(ContactSystemConstant.DataKey.KEY_USER_ID, userId);
+            map.put(ContactSystemConstant.DataKey.KEY_CONTACT_ID, contactId);
+            int row = sqlSession.delete(getMyBatisNameSpace("delete"), map);
             if (row > 0) {
                 sqlSession.commit();
                 return true;
@@ -106,18 +116,18 @@ public class ContactDaoByMyBatisImpl extends BaseDao<Contact> implements Contact
     }
 
     @Override
-    public boolean deleteList(String[] ids) {
+    public boolean deleteList(String userId, String[] ids) {
         SqlSession sqlSession = null;
         try {
             sqlSession = MybatisHelper.getInstance().getSqlSession();
-            int row = sqlSession.delete(getMyBatisNameSpace("deleteList"), ids);
-            //批量删除，如果传入不存在的id，则不会删除到，直接无视了
-            if (row > 0) {
-                sqlSession.commit();
-                return true;
-            } else {
-                sqlSession.rollback();
+            for (String id : ids) {
+                HashMap<String, Object> map = new HashMap<String, Object>();
+                map.put(ContactSystemConstant.DataKey.KEY_USER_ID, userId);
+                map.put(ContactSystemConstant.DataKey.KEY_CONTACT_ID, id);
+                sqlSession.delete(getMyBatisNameSpace("delete"), map);
             }
+            sqlSession.commit();
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
             if (sqlSession != null) {
@@ -130,16 +140,21 @@ public class ContactDaoByMyBatisImpl extends BaseDao<Contact> implements Contact
     }
 
     @Override
-    public Contact findById(String id) throws ContactNoExistException {
+    public Contact findById(String userId, String contactId) throws ContactNoExistException {
         SqlSession sqlSession = null;
         Contact contact = null;
         try {
             sqlSession = MybatisHelper.getInstance().getSqlSession();
-            contact = sqlSession.selectOne(getMyBatisNameSpace("findById"), id);
+            HashMap<String, Object> map = new HashMap<String, Object>();
+            map.put(ContactSystemConstant.DataKey.KEY_USER_ID, userId);
+            map.put(ContactSystemConstant.DataKey.KEY_CONTACT_ID, contactId);
+            contact = sqlSession.selectOne(getMyBatisNameSpace("findById"), map);
             if (contact == null) {
                 throw new ContactNoExistException();
             }
             return contact;
+        } catch (ContactNoExistException e) {
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -149,31 +164,38 @@ public class ContactDaoByMyBatisImpl extends BaseDao<Contact> implements Contact
     }
 
     @Override
-    public Contact findByName(String contactName) throws ContactNoExistException {
+    public Contact findByName(String userId, String contactName) throws ContactNoExistException {
         SqlSession sqlSession = null;
         try {
             sqlSession = MybatisHelper.getInstance().getSqlSession();
             LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-            map.put("contactName", contactName);
+            map.put(ContactSystemConstant.DataKey.KEY_USER_ID, userId);
+            map.put(ContactSystemConstant.DataKey.KEY_CONTACT_NAME, contactName);
             Contact contact = sqlSession.selectOne(getMyBatisNameSpace("findByName"), map);
             if (contact == null) {
                 throw new ContactNoExistException();
             }
             return contact;
+        } catch (ContactNoExistException e) {
+            throw new ContactNoExistException(e);
         } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         } finally {
             MybatisHelper.getInstance().closeSqlSession();
         }
-        return null;
     }
 
     @Override
     public boolean checkIsExist(Contact contact) {
         SqlSession sqlSession = null;
         try {
+            //查询指定的用户是否已经存在了这个联系人姓名
             sqlSession = MybatisHelper.getInstance().getSqlSession();
-            int id = sqlSession.selectOne(getMyBatisNameSpace("checkIsExist"), contact);
+            Integer id = sqlSession.selectOne(getMyBatisNameSpace("checkIsExist"), contact);
+            if (id == null) {
+                return false;
+            }
             return id > 0;
         } catch (Exception e) {
             e.printStackTrace();
@@ -184,11 +206,11 @@ public class ContactDaoByMyBatisImpl extends BaseDao<Contact> implements Contact
     }
 
     @Override
-    protected List<Contact> onFindAllWithPage(PageMsg pageMsg) {
+    protected List<Contact> onFindAllWithPage(Map<String, Object> args, PageMsg pageMsg) {
         SqlSession sqlSession = null;
         try {
             sqlSession = MybatisHelper.getInstance().getSqlSession();
-            Map<String, Object> map = new LinkedHashMap<String, Object>();
+            Map<String, Object> map = new LinkedHashMap<String, Object>(args);
             map.put("startIndex", pageMsg.getStartIndex());
             map.put("count", pageMsg.getCount());
             List<Contact> allWithPage = sqlSession.selectList(getMyBatisNameSpace("onFindAllWithPage"), map);
@@ -206,11 +228,12 @@ public class ContactDaoByMyBatisImpl extends BaseDao<Contact> implements Contact
     }
 
     @Override
-    public List<Contact> findAll() {
+    public List<Contact> findAll(Map<String, Object> args) {
         SqlSession sqlSession = null;
         try {
             sqlSession = MybatisHelper.getInstance().getSqlSession();
-            List<Contact> list = sqlSession.selectList(getMyBatisNameSpace("findAll"));
+            HashMap<String, Object> map = new HashMap<String, Object>(args);
+            List<Contact> list = sqlSession.selectList(getMyBatisNameSpace("findAll"), map);
             if (list != null) {
                 return list;
             } else {

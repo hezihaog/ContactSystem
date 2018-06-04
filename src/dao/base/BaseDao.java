@@ -10,7 +10,9 @@ import util.JdbcUtil;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Package: dao.base
@@ -20,6 +22,27 @@ import java.util.List;
  * Descirbe:Dao层基类
  */
 public abstract class BaseDao<T extends IContent> implements IDao<T> {
+    /**
+     * 当前Dao的表名
+     */
+    private final String mTableName;
+
+    public BaseDao() {
+        mTableName = initTabName();
+    }
+
+    /**
+     * 初始化表名
+     */
+    protected abstract String initTabName();
+
+    /**
+     * 获取当前Dao的表名
+     */
+    public String getTabName() {
+        return mTableName;
+    }
+
     /**
      * 统一更新方法（update、insert、delete）
      *
@@ -192,7 +215,17 @@ public abstract class BaseDao<T extends IContent> implements IDao<T> {
     }
 
     @Override
+    public final List<T> findAll() {
+        return findAll(new HashMap<String, Object>());
+    }
+
+    @Override
     public final List<T> findAllWithPage(IPageRequestParams pageParams) {
+        return findAllWithPage(new HashMap<String, Object>(), pageParams);
+    }
+
+    @Override
+    public List<T> findAllWithPage(Map<String, Object> args, IPageRequestParams pageParams) {
         //获取总条数
         int totalCount = getTotalCount();
         //越界处理
@@ -205,7 +238,7 @@ public abstract class BaseDao<T extends IContent> implements IDao<T> {
         int currentPage = pageParams.getCurrentPage();
         int startIndex = (currentPage - 1) * pageParams.getPageCount();
         int count = pageParams.getPageCount();
-        return onFindAllWithPage(new PageMsg(startIndex, count));
+        return onFindAllWithPage(args, new PageMsg(startIndex, count));
     }
 
     /**
@@ -228,7 +261,8 @@ public abstract class BaseDao<T extends IContent> implements IDao<T> {
     /**
      * 将处理过的信息给子类复写
      *
+     * @param args    传递参数的容器
      * @param pageMsg 分页信息
      */
-    protected abstract List<T> onFindAllWithPage(PageMsg pageMsg);
+    protected abstract List<T> onFindAllWithPage(Map<String, Object> args, PageMsg pageMsg);
 }
