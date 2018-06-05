@@ -8,7 +8,10 @@
 
 	<!-- 设置类型别名 -->
 	<typeAliases>
-		<typeAlias type="entity.Contact" alias="contact"/>
+        <!-- POJO类单个映射 -->
+		<!--<typeAlias type="entity.Contact" alias="contact"/>-->
+        <!-- 包扫描，设定包路径，只是可以使用类名，不区分大小写 -->
+        <package name="entity"/>
 	</typeAliases>
 
 	<!-- 设置一个默认的连接环境信息 -->
